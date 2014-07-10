@@ -44,6 +44,11 @@ To customize the workflow, you can change the `PYPARAMS` macro to give `trello2m
 arguments, or mess around with the `MDPARAMS` to change Pandoc's (or you Markdown converter's)
 behaviour.
 
+The path to the file you want to convert can be set by the `SOURCE` macro. So, a typical call of the
+makefile will look somehow like this:
+
+    make pdf path/to/file.json
+
 ## Todo ##
 
 - Option to include comments
