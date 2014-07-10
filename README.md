@@ -58,5 +58,5 @@ makefile will look somehow like this:
 ## Licence ##
 
 All code is [unlicensed](http://unlicense.org/), except for the template in `tex/trello.latex`,
-which included in [Pandoc](https://github.com/jgm/pandoc/blob/master/COPYRIGHT) and thus subject to
-the GPL.
+which is [included](https://github.com/jgm/pandoc/blob/master/COPYRIGHT) in Pandoc and thus subject
+to the GPL.
