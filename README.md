@@ -15,7 +15,7 @@ each cards.
 
 Markdown used inside cards is preserved, except that section headings on cards are converted down to
 lower subsections to keep the logical structure (although, this is currently only done for
-[Atx-style headers](http://johnmacfarlane.net/pandoc/README.html#atx-style-headers). Attachments on
+[Atx-style headers](http://johnmacfarlane.net/pandoc/README.html#atx-style-headers)). Attachments on
 cards are converted to links to the original documents on Trello's servers. Checklists are converted
 to bullet lists and prepended the phrase "Checklist:", to distinguish them from subsections
 containing ordinary lists. Archived lists and cards are filtered out by default.
@@ -52,4 +52,6 @@ behaviour.
 
 ## Licence ##
 
-All code is [unlicensed](http://unlicense.org/).
+All code is [unlicensed](http://unlicense.org/), except for the template in `tex/trello.latex`,
+which included in [Pandoc](https://github.com/jgm/pandoc/blob/master/COPYRIGHT) and thus subject to
+the GPL.
