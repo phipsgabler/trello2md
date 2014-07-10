@@ -5,9 +5,10 @@ This script converts JSON exports from [Trello](http://trello.com) to
 translated further to other formats such as PDF or HTML using a Markdown editor (like
 [this](https://stackedit.io/#) or converter (like [Pandoc](http://johnmacfarlane.net/pandoc/)).
 
-It is used quite simple:
+To use the script, you need to have installed [Python 3](https://www.python.org/download). Then,
+from a terminal, you can type the following:
 
-    ./src/trello2md.py inputfile.json
+    python3 ./src/trello2md.py inputfile.json
     
 This will generate a file `inputfile.md`, containing a section for each list, and subsections for
 each cards. 
@@ -48,3 +49,7 @@ behaviour.
 - Option to include comments
 - Option to disable the default lists (makes sense when using `--archived`)
 - Option to quote out all LaTeX commands in the input
+
+## Licence ##
+
+All code is [unlicensed](http://unlicense.org/).
