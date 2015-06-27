@@ -47,7 +47,7 @@ behaviour.
 The path to the file you want to convert can be set by the `SOURCE` macro. So, a typical call of the
 makefile will look somehow like this:
 
-    make pdf path/to/file.json
+    make pdf SOURCE=path/to/file.json
 
 ## Todo ##
 
