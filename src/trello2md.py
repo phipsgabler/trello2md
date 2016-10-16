@@ -2,6 +2,7 @@
 
 """ 
 Terminal program to convert Trello's json-exports to markdown.
+See: https://github.com/phipsgabler/trello2md
 """
 
 import sys
@@ -10,7 +11,9 @@ import json
 import re
 
 
+# a url in a line (obligatory starting with the protocol part)
 find_url = re.compile("(^|.* )([a-zA-Z]{3,4}://[^ ]*)(.*)$")
+
 ################################################################################
 def unlines(line):
     """Remove all newlines from a string."""
@@ -20,19 +23,19 @@ def unlines(line):
 ################################################################################
 def prepare_content(content):
     """Prepare nested markdown in content of a card."""
-
-    # correct heading levels 
+    
     result = []
     for line in content.splitlines():
+        # turn urls into actual links
         match = find_url.match(line)
         if match:
-           result.append('{0}<{1}>{2}  '.format(match.group(1),match.group(2),match.group(3)))
-        elif line.startswith('##') and line.endswith('##'):
-            result.append('##{0}##  '.format(unlines(line)))
-        elif line.startswith('#') and line.endswith('#'):
-            result.append('##{0}##  '.format(unlines(line)))
+           line = '{0}[{1}]({1}){2}'.format(match.group(1), match.group(2), match.group(3))
+           
+        # correct heading levels (add two)
+        if line.startswith('#') and line.endswith('#'):
+            result.append('##{0}##'.format(unlines(line)))
         else:
-            result.append(line + '  ')
+            result.append(line)
     
     return '\n'.join(result)
 
@@ -57,6 +60,7 @@ def print_card(card_id, data, print_labels, print_card_links):
             labels.append(label_string)
 
         labels.append(') ')
+        
     labels_string = ''.join(labels)
 
     # format attachments
@@ -65,7 +69,7 @@ def print_card(card_id, data, print_labels, print_card_links):
     attachments_string = '\n\n'.join(attachments) + '\n'
 
     # put it together
-    return '## {name} {lbls}##\n{cntnt}\n{attms}\n'.format( \
+    return '## {name} {lbls} ##\n{cntnt}\n{attms}\n'.format( \
                                           name=unlines(card['name']), \
                                           cntnt=content, \
                                           attms=attachments_string, \
@@ -89,38 +93,10 @@ def print_checklists(card_id, data):
 
 ################################################################################
 def main():
-    # HELP_MESSAGE = 'Usage: trello2md.py <inputfile> ' \
-    #                '[--labels] [--card-links] [--archived]'
-
-    # try:
-    #     opts, args = getopt.getopt(sys.argv[1:], 'hl', \
-    #                                ['help', 'labels', 'card-links', 'archived'])
-    # except getopt.GetoptError as e:
-    #     print(e)
-    #     print(HELP_MESSAGE)
-    #     sys.exit(2)
-
-    # inputfile, outputfile = None, None
-    # print_labels, print_card_links, print_archived = False, False, False
-
-    # for opt, arg in opts:
-    #     if opt == '-h' or opt == '--help':
-    #         print(HELP_MESSAGE)
-    #         sys.exit()
-    #     elif opt == '--labels':
-    #         print_labels = True
-    #     elif opt == '--card-links':
-    #         print_card_links = True
-    #     elif opt == '--archived':
-    #         print_archived = True
-    #     else:
-    #         inputfile = arg
-
-    # if not (inputfile):
-    #     sys.exit(HELP_MESSAGE)
+    
     parser = argparse.ArgumentParser(description='Convert a JSON export from Trello to Markdown.')
     parser.add_argument('inputfile', help='Path to the input JSON file')
-    parser.add_argument('-n', '--no-header', help='Avoid printing header', action='store_true')
+    parser.add_argument('-i', '--header', help='Include header page', action='store_true')
     parser.add_argument('-l', '--labels', help='Print card labels', action='store_true')
     parser.add_argument('-a', '--archived', help='Don\'t ignore archived lists', action='store_true')
     parser.add_argument('-c', '--card-links', help='(Currently not implemented)', action='store_true')
@@ -134,20 +110,22 @@ def main():
     except IOError as e:
         sys.exit("I/O error({0}): {1}".format(e.errno, e.strerror))
 
-    # process all lists in 'data'
+    
     markdown = []
-    if not args.no_header:
+
+    # optionally, include header page
+    if args.header:
         markdown.append("**Board name: {0}**\n\n".format(data['name']))
-        markdown.append("Short URL: <{0}>  \n".format(data['shortUrl']))
+        markdown.append("Short URL: [{0}]({0})  \n".format(data['shortUrl']))
         markdown.append("Number of lists: {0}  \n".format(len(data['lists'])))
         markdown.append("Number of cards in lists: {0}  \n".format(len(data['cards'])))
         markdown.append("Last change: {0}\n\n\n".format(data['dateLastActivity']))
+        
+    # process all lists in 'data', respecting closedness
     for lst in data['lists']:
-        if lst['closed'] and not args.archived:
-            continue
-        else:
-            # list header
-            markdown.append('# {0} #\n\n'.format(unlines(lst['name'])))
+        if not lst['closed'] or args.archived:
+            # format list header
+            markdown.append('#{0}#\n\n'.format(unlines(lst['name'])))
 
             # process all cards in current list
             for card in data['cards']:
