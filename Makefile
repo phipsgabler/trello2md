@@ -1,28 +1,46 @@
-SOURCE = export.json
-TARGET = $(subst .json,,$(SOURCE))
+SOURCES = $(wildcard *.json)
+MD_TARGETS = $(SOURCES:.json=.md)
+PDF_TARGETS = $(SOURCES:.json=.pdf)
+HTML_TARGETS = $(SOURCES:.json=.html)
+
 TRELLO2MD = ./src/trello2md.py
 PYPARAMS = 
 MDPROC = pandoc
 PANDOCTEMPLATE_TEX = tex/trello.latex
-MDPARAMS_PDF = $(TARGET).md -o $(TARGET).pdf --template=`pwd`/$(PANDOCTEMPLATE_TEX)
-MDPARAMS_HTML = $(TARGET).md -o $(TARGET).html
+#$< is the first "source"
+#$@ is the "target to generate"
+MDPARAMS_PDF = $< -o $@ --template=`pwd`/$(PANDOCTEMPLATE_TEX)
+MDPARAMS_HTML = $< -o $@
 
 ifeq ($(shell which $(MDPROC)),)
 $(error Please install $(MDPROC) e.g. sudo apt install pandoc)
 endif
 
-all: markdown
+all: $(MD_TARGETS)
+pdf: pdf_hint $(PDF_TARGETS)
+html: $(HTML_TARGETS)
 
-markdown: $(TARGET).md
+pdf_hint:
+	$(info For PDF generation: Be sure to have the Font ecrm1000.tfm installed.\
+ for ubuntu this can be done with)
+	$(info sudo apt install texlive-fonts-recommended)
 
-pdf: markdown
+ALL_MDS=$(wildcard *.md)
+ALL_BUT_README=$(filter-out README.md,$(ALL_MDS))
+clean:
+	rm -f *.pdf $(ALL_BUT_README) *.html *.latex
+
+%.pdf: %.md
 	$(MDPROC) $(MDPARAMS_PDF)
 
-html: markdown
+%.html: %.md
 	$(MDPROC) $(MDPARAMS_HTML)
 
-latex: markdown
+#does not work yet
+%.latex: %.md
 	$(MDPROC) $(MDPARAMS_TEX)
 
-$(TARGET).md: $(SOURCE)
-	python3 $(TRELLO2MD) $(SOURCE) $(PYPARAMS)
+%.md: %.json
+	python3 $(TRELLO2MD) $< $(PYPARAMS)
+
+.PHONY: pdf_hint all pdf html

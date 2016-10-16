@@ -1,0 +1,7 @@
+*.html
+*.json
+*.md
+*.latex
+missfont.log
+
+!README.md
