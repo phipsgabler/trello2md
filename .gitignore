@@ -1,8 +1,9 @@
 *.html
 *.json
 *.md
-*.latex
+*.tex
 *.pdf
+
 missfont.log
 
 !README.md

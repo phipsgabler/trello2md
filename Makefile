@@ -2,6 +2,7 @@ SOURCES = $(wildcard *.json)
 MD_TARGETS = $(SOURCES:.json=.md)
 PDF_TARGETS = $(SOURCES:.json=.pdf)
 HTML_TARGETS = $(SOURCES:.json=.html)
+TEX_TARGETS = $(SOURCES:.json=.tex)
 
 TRELLO2MD = ./src/trello2md.py
 PYPARAMS = 
@@ -11,6 +12,7 @@ PANDOCTEMPLATE_TEX = tex/trello.latex
 #$@ is the "target to generate"
 MDPARAMS_PDF = $< -o $@ --template=`pwd`/$(PANDOCTEMPLATE_TEX)
 MDPARAMS_HTML = $< -o $@
+MDPARAMS_TEX = $< -o $@
 
 ifeq ($(shell which $(MDPROC)),)
 $(error Please install $(MDPROC) e.g. sudo apt install pandoc)
@@ -19,6 +21,7 @@ endif
 all: $(MD_TARGETS)
 pdf: pdf_hint $(PDF_TARGETS)
 html: $(HTML_TARGETS)
+latex: $(TEX_TARGETS)
 
 pdf_hint:
 	$(info For PDF generation: Be sure to have the Font ecrm1000.tfm installed.\
@@ -37,7 +40,7 @@ clean:
 	$(MDPROC) $(MDPARAMS_HTML)
 
 #does not work yet
-%.latex: %.md
+%.tex: %.md
 	$(MDPROC) $(MDPARAMS_TEX)
 
 %.md: %.json
