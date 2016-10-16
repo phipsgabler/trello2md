@@ -7,6 +7,10 @@ PANDOCTEMPLATE_TEX = tex/trello.latex
 MDPARAMS_PDF = $(TARGET).md -o $(TARGET).pdf --template=`pwd`/$(PANDOCTEMPLATE_TEX)
 MDPARAMS_HTML = $(TARGET).md -o $(TARGET).html
 
+ifeq ($(shell which $(MDPROC)),)
+$(error Please install $(MDPROC) e.g. sudo apt install pandoc)
+endif
+
 all: markdown
 
 markdown: $(TARGET).md
