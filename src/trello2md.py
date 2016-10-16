@@ -160,7 +160,7 @@ def main():
         with open(outputfile, 'w') as of:
             of.write(''.join(markdown))
 
-        print('Sucessfully translated!')
+        print('Sucessfully translated to "{0}"!'.format(outputfile))
 
         if args.card_links:
             print('Option --card-links is currently unimplemented and ignored.')

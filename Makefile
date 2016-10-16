@@ -18,6 +18,10 @@ ifeq ($(shell which $(MDPROC)),)
 $(error Please install $(MDPROC) e.g. sudo apt install pandoc)
 endif
 
+ifeq ($(SOURCES),)
+$(error Please save a ".json" file from Trello in this directory or set the SOURCES variable to point to a .json file from trello)
+endif
+
 all: $(MD_TARGETS)
 pdf: pdf_hint $(PDF_TARGETS)
 html: $(HTML_TARGETS)
@@ -31,7 +35,7 @@ pdf_hint:
 ALL_MDS=$(wildcard *.md)
 ALL_BUT_README=$(filter-out README.md,$(ALL_MDS))
 clean:
-	rm -f *.pdf $(ALL_BUT_README) *.html *.latex
+	rm -f *.pdf $(ALL_BUT_README) *.html *.tex
 
 %.pdf: %.md
 	$(MDPROC) $(MDPARAMS_PDF)
