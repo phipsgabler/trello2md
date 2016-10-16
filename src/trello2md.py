@@ -120,6 +120,7 @@ def main():
     #     sys.exit(HELP_MESSAGE)
     parser = argparse.ArgumentParser(description='Convert a JSON export from Trello to Markdown.')
     parser.add_argument('inputfile', help='Path to the input JSON file')
+    parser.add_argument('-n', '--no-header', help='Avoid printing header', action='store_true')
     parser.add_argument('-l', '--labels', help='Print card labels', action='store_true')
     parser.add_argument('-a', '--archived', help='Don\'t ignore archived lists', action='store_true')
     parser.add_argument('-c', '--card-links', help='(Currently not implemented)', action='store_true')
@@ -135,6 +136,12 @@ def main():
 
     # process all lists in 'data'
     markdown = []
+    if not args.no_header:
+        markdown.append("**Board name: {0}**\n\n".format(data['name']))
+        markdown.append("Short URL: <{0}>  \n".format(data['shortUrl']))
+        markdown.append("Number of lists: {0}  \n".format(len(data['lists'])))
+        markdown.append("Number of cards in lists: {0}  \n".format(len(data['cards'])))
+        markdown.append("Last change: {0}\n\n\n".format(data['dateLastActivity']))
     for lst in data['lists']:
         if lst['closed'] and not args.archived:
             continue
