@@ -26,15 +26,15 @@ def prepare_content(content):
     for line in content.splitlines():
         match = find_url.match(line)
         if match:
-           result.append('{0}<{1}>{2}'.format(match.group(1),match.group(2),match.group(3)))
+           result.append('{0}<{1}>{2}  '.format(match.group(1),match.group(2),match.group(3)))
         elif line.startswith('##') and line.endswith('##'):
-            result.append('##{0}##\n'.format(unlines(line)))
+            result.append('##{0}##  '.format(unlines(line)))
         elif line.startswith('#') and line.endswith('#'):
-            result.append('##{0}##\n'.format(unlines(line)))
+            result.append('##{0}##  '.format(unlines(line)))
         else:
-            result.append(line + '\n')
+            result.append(line + '  ')
     
-    return ''.join(result)
+    return '\n'.join(result)
 
 ################################################################################
 def print_card(card_id, data, print_labels, print_card_links):
