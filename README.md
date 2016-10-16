@@ -24,6 +24,7 @@ There are currently two additional arguments:
 
 - `--labels` adds a card's labels to its heading
 - `--archived` also includes archived lists and cards.
+- `--header` prepends a header page with general information about the board.
 
 More options are planned.
 
@@ -52,8 +53,8 @@ makefile will look somehow like this:
 ## Todo ##
 
 - Option to include comments
-- Option to disable the default lists (makes sense when using `--archived`)
 - Option to quote out all LaTeX commands in the input
+- Recognize heading syntax with underlines ("setext")
 
 ## Licence ##
 
