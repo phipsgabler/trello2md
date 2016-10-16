@@ -7,7 +7,10 @@ Terminal program to convert Trello's json-exports to markdown.
 import sys
 import argparse
 import json
+import re
 
+
+find_url = re.compile("(^|.* )([a-zA-Z]{3,4}://[^ ]*)(.*)$")
 ################################################################################
 def unlines(line):
     """Remove all newlines from a string."""
@@ -21,7 +24,10 @@ def prepare_content(content):
     # correct heading levels 
     result = []
     for line in content.splitlines():
-        if line.startswith('##') and line.endswith('##'):
+        match = find_url.match(line)
+        if match:
+           result.append('{0}<{1}>{2}'.format(match.group(1),match.group(2),match.group(3)))
+        elif line.startswith('##') and line.endswith('##'):
             result.append('##{0}##\n'.format(unlines(line)))
         elif line.startswith('#') and line.endswith('#'):
             result.append('##{0}##\n'.format(unlines(line)))
