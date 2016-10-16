@@ -2,6 +2,7 @@
 *.json
 *.md
 *.latex
+*.pdf
 missfont.log
 
 !README.md
