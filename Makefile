@@ -43,7 +43,7 @@ clean:
 %.tex: %.md
 	$(MDPROC) $(MDPARAMS_TEX)
 
-%.md: %.json
+%.md: %.json $(TRELLO2MD)
 	python3 $(TRELLO2MD) $< $(PYPARAMS)
 
 .PHONY: pdf_hint all pdf html
