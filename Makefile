@@ -29,8 +29,7 @@ latex: $(TEX_TARGETS)
 
 pdf_hint:
 	$(info For PDF generation: Be sure to have the Font ecrm1000.tfm installed.\
- for ubuntu this can be done with)
-	$(info sudo apt install texlive-fonts-recommended)
+ For ubuntu this can be done with 'sudo apt install texlive-fonts-recommended')
 
 ALL_MDS=$(wildcard *.md)
 ALL_BUT_README=$(filter-out README.md,$(ALL_MDS))
