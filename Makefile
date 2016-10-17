@@ -10,6 +10,13 @@ MDPROC = pandoc
 PANDOCTEMPLATE_TEX = tex/trello.latex
 #$< is the first "source"
 #$@ is the "target to generate"
+
+# to add the table of contents add the following to MDPARAMS_PDF
+# --variable=toc:1
+
+# to get less margins add the following to MDPARAMS_PDF
+# --variable=margin-left:2cm --variable=margin-right:2cm --variable=margin-top:2cm --variable=margin-bottom:2cm
+
 MDPARAMS_PDF = $< -o $@ --template=`pwd`/$(PANDOCTEMPLATE_TEX)
 MDPARAMS_HTML = $< -o $@
 MDPARAMS_TEX = $< -o $@
