@@ -40,13 +40,39 @@ def prepare_content(content):
     return '\n'.join(result)
 
 ################################################################################
-def print_card(card_id, data, print_labels, print_card_links):
+def prepare_comments(actions, card_id):
+    ret = []
+    for action in actions:
+        try:
+            if action["type"] == "commentCard" and action["data"]["card"]["id"] == card_id:
+                comment = action["date"] + "  \n"
+                comment += action["memberCreator"]["fullName"] + "  \n"
+                comment += prepare_content(action["data"]["text"])
+                ret.append(comment)
+        except:
+            pass
+
+    if len(ret) > 0:
+        return "\n\n".join(ret)
+    else:
+        return ""
+
+################################################################################
+def print_card(card_id, data, print_labels, print_comments):
     """Print name, content and attachments of a card."""
 
     # get card and pre-format content
     card = next(c for c in data['cards'] if c['id'] == card_id)
     content = prepare_content(card['desc']) + '\n'
 
+    if print_comments:
+        comments = prepare_comments(data['actions'], card_id)
+    else:
+        comments = ""
+
+    #when none found or not selected for output
+    if len(comments) > 0:
+       comments = "### Comments ###\n" + comments
     # format labels, if wanted
     labels = []
     if print_labels and card['labels']:
@@ -69,10 +95,11 @@ def print_card(card_id, data, print_labels, print_card_links):
     attachments_string = '\n\n'.join(attachments) + '\n'
 
     # put it together
-    return '## {name} {lbls} ##\n{cntnt}\n{attms}\n'.format( \
+    return '## {name} {lbls} ##\n{cntnt}\n{attms}\n{comments}\n'.format( \
                                           name=unlines(card['name']), \
                                           cntnt=content, \
                                           attms=attachments_string, \
+                                          comments=comments, \
                                           lbls=labels_string)
 
 ################################################################################
@@ -97,6 +124,7 @@ def main():
     parser = argparse.ArgumentParser(description='Convert a JSON export from Trello to Markdown.')
     parser.add_argument('inputfile', help='Path to the input JSON file')
     parser.add_argument('-i', '--header', help='Include header page', action='store_true')
+    parser.add_argument('-m', '--comments', help='Include card comments', action='store_true')
     parser.add_argument('-l', '--labels', help='Print card labels', action='store_true')
     parser.add_argument('-a', '--archived', help='Don\'t ignore archived lists', action='store_true')
     parser.add_argument('-c', '--card-links', help='(Currently not implemented)', action='store_true')
@@ -133,7 +161,7 @@ def main():
                     markdown.append(print_card(card['id'], \
                                                data, \
                                                args.labels, \
-                                               args.card_links))
+                                               args.comments ))
                     markdown.append(print_checklists(card['id'], data))
 
     # save result to file
