@@ -40,39 +40,37 @@ def prepare_content(content):
     return '\n'.join(result)
 
 ################################################################################
-def prepare_comments(actions, card_id):
-    ret = []
-    for action in actions:
+def prepare_all_comments(data):
+    """Returns a dictionary for each card_id with a list of comments"""
+    ret = {}
+    for action in data['actions']:
         try:
-            if action["type"] == "commentCard" and action["data"]["card"]["id"] == card_id:
+            if action["type"] == "commentCard":
+                card_id = action["data"]["card"]["id"]
+                if not card_id in ret:
+                   ret[card_id] = []
                 comment = action["date"] + "  \n"
                 comment += action["memberCreator"]["fullName"] + "  \n"
                 comment += prepare_content(action["data"]["text"])
-                ret.append(comment)
+                ret[card_id].append(comment)
         except:
             pass
-
-    if len(ret) > 0:
-        return "\n\n".join(ret)
-    else:
-        return ""
+    return ret
 
 ################################################################################
-def print_card(card_id, data, print_labels, print_comments):
-    """Print name, content and attachments of a card."""
+def print_card(card_id, data, comments, print_labels):
+    """Print name, content, comments and attachments of a card."""
 
     # get card and pre-format content
     card = next(c for c in data['cards'] if c['id'] == card_id)
     content = prepare_content(card['desc']) + '\n'
 
-    if print_comments:
-        comments = prepare_comments(data['actions'], card_id)
-    else:
-        comments = ""
+    comment_output = ""
+    #comments are empty if they should not be printed
+    if card_id in comments:
+       comment_output  = "### Comments ###\n"
+       comment_output += "\n\n".join(comments[card_id])
 
-    #when none found or not selected for output
-    if len(comments) > 0:
-       comments = "### Comments ###\n" + comments
     # format labels, if wanted
     labels = []
     if print_labels and card['labels']:
@@ -99,7 +97,7 @@ def print_card(card_id, data, print_labels, print_comments):
                                           name=unlines(card['name']), \
                                           cntnt=content, \
                                           attms=attachments_string, \
-                                          comments=comments, \
+                                          comments=comment_output, \
                                           lbls=labels_string)
 
 ################################################################################
@@ -148,7 +146,9 @@ def main():
         markdown.append("Number of lists: {0}  \n".format(len(data['lists'])))
         markdown.append("Number of cards in lists: {0}  \n".format(len(data['cards'])))
         markdown.append("Last change: {0}\n\n\n".format(data['dateLastActivity']))
-        
+    comments = {}
+    if args.comments:
+        comments = prepare_all_comments(data)
     # process all lists in 'data', respecting closedness
     for lst in data['lists']:
         if not lst['closed'] or args.archived:
@@ -160,8 +160,8 @@ def main():
                 if (not card['closed'] or args.archived) and (card['idList'] == lst['id']):
                     markdown.append(print_card(card['id'], \
                                                data, \
-                                               args.labels, \
-                                               args.comments ))
+                                               comments, \
+                                               args.labels))
                     markdown.append(print_checklists(card['id'], data))
 
     # save result to file
