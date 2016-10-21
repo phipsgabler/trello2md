@@ -43,18 +43,22 @@ def prepare_content(content):
 def prepare_all_comments(data):
     """Returns a dictionary for each card_id with a list of comments"""
     ret = {}
+    
     for action in data['actions']:
-        try:
-            if action["type"] == "commentCard":
-                card_id = action["data"]["card"]["id"]
-                if not card_id in ret:
-                   ret[card_id] = []
-                comment = action["date"] + "  \n"
-                comment += action["memberCreator"]["fullName"] + "  \n"
-                comment += prepare_content(action["data"]["text"])
-                ret[card_id].append(comment)
-        except:
-            pass
+        if action["type"] == "commentCard":
+            card_id = action["data"]["card"]["id"]
+            
+            if not card_id in ret:
+               ret[card_id] = []
+               
+            name = action["memberCreator"]["fullName"]
+            date = action["date"]
+            content = prepare_content(action["data"]["text"])
+            
+            comment_string = "- **{name}** ({date}):\n {content} \n".format(
+                name=name, date=date, content=content)
+            
+            ret[card_id].append(comment_string)
     return ret
 
 ################################################################################
@@ -65,11 +69,11 @@ def print_card(card_id, data, comments, print_labels):
     card = next(c for c in data['cards'] if c['id'] == card_id)
     content = prepare_content(card['desc']) + '\n'
 
-    comment_output = ""
+    comment_output = ''
     #comments are empty if they should not be printed
     if card_id in comments:
-       comment_output  = "### Comments ###\n"
-       comment_output += "\n\n".join(comments[card_id])
+       comment_output  = '### Comments ###\n'
+       comment_output += '\n\n'.join(comments[card_id])
 
     # format labels, if wanted
     labels = []
