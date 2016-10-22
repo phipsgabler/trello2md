@@ -22,9 +22,10 @@ containing ordinary lists. Archived lists and cards are filtered out by default.
 
 There are currently two additional arguments:
 
-- `--labels` adds a card's labels to its heading
-- `--archived` also includes archived lists and cards.
-- `--header` prepends a header page with general information about the board.
+- `--labels`/`-l` adds a card's labels to its heading.
+- `--archived`/`-a` also includes archived lists and cards.
+- `--header`/`-i` prepends a header page with general information about the board.
+- `--comments`/`-m` includes the comments on a card.
 
 More options are planned.
 
@@ -50,9 +51,8 @@ makefile will look somehow like this:
 
     make pdf SOURCE=path/to/file.json
 
-## Todo ##
+## Todo/Ideas ##
 
-- Option to include comments
 - Option to quote out all LaTeX commands in the input
 - Recognize heading syntax with underlines ("setext")
 
