@@ -12,7 +12,7 @@ import re
 
 
 # a url in a line (obligatory starting with the protocol part)
-find_url = re.compile("(^|.* )([a-zA-Z]{3,4}://[^ ]*)(.*)$")
+find_url = re.compile('(^|.* )([a-zA-Z]{3,4}://[^ ]*)(.*)$')
 
 ################################################################################
 def unlines(line):
@@ -45,17 +45,17 @@ def prepare_all_comments(data):
     ret = {}
     
     for action in data['actions']:
-        if action["type"] == "commentCard":
-            card_id = action["data"]["card"]["id"]
+        if action['type'] == 'commentCard':
+            card_id = action['data']['card']['id']
             
             if not card_id in ret:
                ret[card_id] = []
                
-            name = action["memberCreator"]["fullName"]
-            date = action["date"]
-            content = prepare_content(action["data"]["text"])
+            name = action['memberCreator']['fullName']
+            date = action['date']
+            content = prepare_content(action['data']['text'])
             
-            comment_string = "- **{name}** ({date}):\n {content} \n".format(
+            comment_string = '- **{name}** ({date}):\n {content} \n'.format(
                 name=name, date=date, content=content)
             
             ret[card_id].append(comment_string)
@@ -138,18 +138,18 @@ def main():
         with open(args.inputfile, 'r') as inf:
             data = json.load(inf)
     except IOError as e:
-        sys.exit("I/O error({0}): {1}".format(e.errno, e.strerror))
+        sys.exit('I/O error({0}): {1}'.format(e.errno, e.strerror))
 
     
     markdown = []
 
     # optionally, include header page
     if args.header:
-        markdown.append("**Board name: {0}**\n\n".format(data['name']))
-        markdown.append("Short URL: [{0}]({0})  \n".format(data['shortUrl']))
-        markdown.append("Number of lists: {0}  \n".format(len(data['lists'])))
-        markdown.append("Number of cards in lists: {0}  \n".format(len(data['cards'])))
-        markdown.append("Last change: {0}\n\n\n".format(data['dateLastActivity']))
+        markdown.append('**Board name: {0}**\n\n'.format(data['name']))
+        markdown.append('Short URL: [{0}]({0})  \n'.format(data['shortUrl']))
+        markdown.append('Number of lists: {0}  \n'.format(len(data['lists'])))
+        markdown.append('Number of cards in lists: {0}  \n'.format(len(data['cards'])))
+        markdown.append('Last change: {0}\n\n\n'.format(data['dateLastActivity']))
     comments = {}
     if args.comments:
         comments = prepare_all_comments(data)
@@ -183,7 +183,7 @@ def main():
             print('Option --card-links is currently unimplemented and ignored.')
 
     except IOError as e:
-        sys.exit("I/O error({0}): {1}".format(e.errno, e.strerror))
+        sys.exit('I/O error({0}): {1}'.format(e.errno, e.strerror))
 
 ################################################################################
 if __name__ == '__main__':
