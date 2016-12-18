@@ -51,6 +51,30 @@ makefile will look somehow like this:
 
     make pdf SOURCE=path/to/file.json
 
+### PDF customizations
+
+To add the table of contents to the PDF please set "TOC" e.g.
+```
+TOC=1 make pdf
+```
+
+To get less margins in the PDF please set "SMALL_MARGIN" e.g.
+```
+SMALL_MARGIN=1 make pdf
+```
+
+or both:
+```
+TOC=1 SMALL_MARGIN=1 make pdf
+```
+
+## Docker support
+In order to avoid installing all tools on your computer you can just install docker and set "USE_DOCKER" while calling make e.g.
+
+```
+USE_DOCKER=1 make all
+```
+
 ## Todo/Ideas ##
 
 - Option to quote out all LaTeX commands in the input

@@ -3,6 +3,7 @@
 *.md
 *.tex
 *.pdf
+build
 
 missfont.log
 
