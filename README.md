@@ -20,12 +20,13 @@ cards are converted to links to the original documents on Trello's servers. Chec
 to bullet lists and prepended the phrase "Checklist:", to distinguish them from subsections
 containing ordinary lists. Archived lists and cards are filtered out by default.
 
-There are currently two additional arguments:
+There currently following arguments are supported:
 
 - `--labels`/`-l` adds a card's labels to its heading.
 - `--archived`/`-a` also includes archived lists and cards.
 - `--header`/`-i` prepends a header page with general information about the board.
 - `--comments`/`-m` includes the comments on a card.
+- `--output`/`-o` set output filename (default is appending `.md` to the input filename)
 
 More options are planned.
 
@@ -51,6 +52,8 @@ makefile will look somehow like this:
 
     make pdf SOURCE=path/to/file.json
 
+If you don't provide the "SOURCE" variable *all* `.json` files in your current directory are converted
+
 ### PDF customizations
 
 To add the table of contents to the PDF please set "TOC" e.g.
@@ -69,10 +72,10 @@ TOC=1 SMALL_MARGIN=1 make pdf
 ```
 
 ## Docker support
-In order to avoid installing all tools on your computer you can just install docker and set "USE_DOCKER" while calling make e.g.
+In order to avoid installing all tools on your computer (especially for pdf conversion) you can just install docker and set "USE_DOCKER" while calling make e.g.
 
 ```
-USE_DOCKER=1 make all
+USE_DOCKER=1 make pdf
 ```
 
 ## Todo/Ideas ##
