@@ -124,12 +124,13 @@ def print_checklists(card_id, data):
 def main():
     
     parser = argparse.ArgumentParser(description='Convert a JSON export from Trello to Markdown.')
-    parser.add_argument('inputfile', help='Path to the input JSON file')
+    parser.add_argument('inputfile', help='The input JSON file')
     parser.add_argument('-i', '--header', help='Include header page', action='store_true')
     parser.add_argument('-m', '--comments', help='Include card comments', action='store_true')
     parser.add_argument('-l', '--labels', help='Print card labels', action='store_true')
     parser.add_argument('-a', '--archived', help='Don\'t ignore archived lists', action='store_true')
     parser.add_argument('-c', '--card-links', help='(Currently not implemented)', action='store_true')
+    parser.add_argument('-o', '--output', help='The output file to create')
 
     args = parser.parse_args()
 
@@ -169,9 +170,12 @@ def main():
                     markdown.append(print_checklists(card['id'], data))
 
     # save result to file
-    outputfile = args.inputfile.replace('.json', '.md')
-    if outputfile == args.inputfile:
-        outputfile += '.md'
+    if (args.output):
+        outputfile = args.output
+    else:
+        outputfile = args.inputfile.replace('.json', '.md')
+        if outputfile == args.inputfile:
+            outputfile += '.md'
 
     try:
         with open(outputfile, 'w') as of:

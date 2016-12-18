@@ -15,41 +15,42 @@ BUILD_DIR_TARGET=$(BUILD_DIR)/.touch
 #$< is the first "source"
 #$@ is the "target to generate"
 
+PANDOCTEMPLATE_TEX = tex/trello.latex
 
 ifndef USE_DOCKER
 MDPROC = pandoc
-MDPARAMS_PDF:= $< -o $@ --template=`pwd`/$(PANDOCTEMPLATE_TEX)
-MDPARAMS_HTML:= $< -o $@
-MDPARAMS_TEX:= $< -o $@
+MDPARAMS_PDF = $< -o $@ --template=`pwd`/$(PANDOCTEMPLATE_TEX) $(MDPARAMS_PDF_ADDITIONAL)
+MDPARAMS_HTML = $< -o $@
+MDPARAMS_TEX = $< -o $@
 ifeq ($(shell which $(MDPROC)),)
 $(error Please install $(MDPROC) e.g. sudo apt install pandoc)
 endif
 
 else
 MDPROC = docker run -v $(shell pwd):/data marcelhuberfoo/pandoc-gitit pandoc
-MDPARAMS_PDF:= -f markdown -t latex $(notdir $<) -o $@ --template=$(PANDOCTEMPLATE_TEX) --latex-engine=xelatex
-MDPARAMS_HTML:= -f markdown -t html5 $(notdir $<) -o $@
-MDPARAMS_TEX:= -f markdown -t latex $(notdir $<) -o $@
+MDPARAMS_PDF = -f markdown -t latex $(BUILD_DIR)/$(notdir $<) -o $@ --template=$(PANDOCTEMPLATE_TEX) --latex-engine=xelatex $(MDPARAMS_PDF_ADDITIONAL)
+MDPARAMS_HTML = -f markdown -t html5 $(BUILD_DIR)/$(notdir $<) -o $@
+MDPARAMS_TEX = -f markdown -t latex $(BUILD_DIR)/$(notdir $<) -o $@
 ifeq ($(shell which docker),)
 $(error Please install docker e.g. sudo apt install docker)
 endif
 endif
 
 ifdef TOC
-MDPARAMS_PDF:=$(MDPARAMS_PDF) --variable=toc:1
+MDPARAMS_PDF_ADDITIONAL:= --variable=toc:1
 endif
 
 ifdef SMALL_MARGIN
-MDPARAMS_PDF:=$(MDPARAMS_PDF) --variable=margin-left:2cm --variable=margin-right:2cm --variable=margin-top:2cm --variable=margin-bottom:2cm
+MDPARAMS_PDF_ADDITIONAL:= $(MDPARAMS_PDF_ADDITIONAL) --variable=margin-left:2cm --variable=margin-right:2cm --variable=margin-top:2cm --variable=margin-bottom:2cm
 endif
 
-PANDOCTEMPLATE_TEX = tex/trello.latex
 
 ifeq ($(SOURCES),)
 $(error Please save a ".json" file from Trello in this directory or set the SOURCES variable to point to a .json file from trello)
 endif
 
-all: $(BUILD_DIR_TARGET) $(MD_TARGETS) clean_permissions
+all: markdown
+markdown: $(BUILD_DIR_TARGET) $(MD_TARGETS) clean_permissions
 pdf: $(BUILD_DIR_TARGET) pdf_hint $(PDF_TARGETS) clean_permissions
 html: $(BUILD_DIR_TARGET) $(HTML_TARGETS) clean_permissions
 latex: $(BUILD_DIR_TARGET) $(TEX_TARGETS) clean_permissions
@@ -60,7 +61,9 @@ $(BUILD_DIR_TARGET):
 	touch $@
 
 ifndef USE_DOCKER
+#nothing to do without docker
 clean_permissions:
+
 pdf_hint:
 	$(info For PDF generation: Be sure to have the Font ecrm1000.tfm installed.\
  For ubuntu this can be done with 'sudo apt install texlive-fonts-recommended')
@@ -87,6 +90,6 @@ clean:
 	$(MDPROC) $(MDPARAMS_TEX)
 
 $(BUILD_DIR)/%.md: %.json $(TRELLO2MD) Makefile
-	python3 $(TRELLO2MD) $< $(PYPARAMS)
+	python3 $(TRELLO2MD) --output $@ $< $(PYPARAMS)
 
 .PHONY: pdf_hint all pdf html
