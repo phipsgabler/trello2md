@@ -27,7 +27,7 @@ $(error Please install $(MDPROC) e.g. sudo apt install pandoc)
 endif
 
 else
-MDPROC = docker run -v $(shell pwd):/data marcelhuberfoo/pandoc-gitit pandoc
+MDPROC = docker run --env "UNAME=$(shell id -u):$(shell id -g)" --volume $(shell pwd):/data marcelhuberfoo/pandoc-gitit pandoc
 MDPARAMS_PDF = -f markdown -t latex $(BUILD_DIR)/$(notdir $<) -o $@ --template=$(PANDOCTEMPLATE_TEX) --latex-engine=xelatex $(MDPARAMS_PDF_ADDITIONAL)
 MDPARAMS_HTML = -f markdown -t html5 $(BUILD_DIR)/$(notdir $<) -o $@
 MDPARAMS_TEX = -f markdown -t latex $(BUILD_DIR)/$(notdir $<) -o $@
@@ -50,28 +50,22 @@ $(error Please save a ".json" file from Trello in this directory or set the SOUR
 endif
 
 all: markdown
-markdown: $(BUILD_DIR_TARGET) $(MD_TARGETS) clean_permissions
-pdf: $(BUILD_DIR_TARGET) pdf_hint $(PDF_TARGETS) clean_permissions
-html: $(BUILD_DIR_TARGET) $(HTML_TARGETS) clean_permissions
-latex: $(BUILD_DIR_TARGET) $(TEX_TARGETS) clean_permissions
+markdown: $(BUILD_DIR_TARGET) $(MD_TARGETS)
+pdf: $(BUILD_DIR_TARGET) pdf_hint $(PDF_TARGETS)
+html: $(BUILD_DIR_TARGET) $(HTML_TARGETS)
+latex: $(BUILD_DIR_TARGET) $(TEX_TARGETS)
 
 $(BUILD_DIR_TARGET):
 	mkdir -p $(BUILD_DIR)
-	chmod a+wrx $(BUILD_DIR)
 	touch $@
 
 ifndef USE_DOCKER
 #nothing to do without docker
-clean_permissions:
-
 pdf_hint:
 	$(info For PDF generation: Be sure to have the Font ecrm1000.tfm installed.\
  For ubuntu this can be done with 'sudo apt install texlive-fonts-recommended')
 else
 pdf_hint:
-clean_permissions:
-	echo "Set permissions of docker-created files back again"
-	sudo chown -R $(shell id -un):$(shell id -gn) $(BUILD_DIR)
 endif
 
 ALL_MDS=$(wildcard *.md)
