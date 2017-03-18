@@ -19,7 +19,7 @@ PANDOCTEMPLATE_TEX = tex/trello.latex
 
 ifndef USE_DOCKER
 MDPROC = pandoc
-MDPARAMS_PDF = $< -o $@ --template=`pwd`/$(PANDOCTEMPLATE_TEX) $(MDPARAMS_PDF_ADDITIONAL)
+MDPARAMS_PDF = $< -o $@ --template=`pwd`/$(PANDOCTEMPLATE_TEX) "--variable=title:$(basename $(notdir $@))" $(MDPARAMS_PDF_ADDITIONAL)
 MDPARAMS_HTML = $< -o $@
 MDPARAMS_TEX = $< -o $@
 ifeq ($(shell which $(MDPROC)),)
@@ -28,7 +28,7 @@ endif
 
 else
 MDPROC = docker run --env "UNAME=$(shell id -u):$(shell id -g)" --volume $(shell pwd):/data marcelhuberfoo/pandoc-gitit pandoc
-MDPARAMS_PDF = -f markdown -t latex $(BUILD_DIR)/$(notdir $<) -o $@ --template=$(PANDOCTEMPLATE_TEX) --latex-engine=xelatex $(MDPARAMS_PDF_ADDITIONAL)
+MDPARAMS_PDF = -f markdown -t latex $(BUILD_DIR)/$(notdir $<) -o $@ --template=$(PANDOCTEMPLATE_TEX) --latex-engine=xelatex "--variable=title:$(basename $(notdir $@))" $(MDPARAMS_PDF_ADDITIONAL)
 MDPARAMS_HTML = -f markdown -t html5 $(BUILD_DIR)/$(notdir $<) -o $@
 MDPARAMS_TEX = -f markdown -t latex $(BUILD_DIR)/$(notdir $<) -o $@
 ifeq ($(shell which docker),)
