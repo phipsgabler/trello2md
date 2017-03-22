@@ -27,7 +27,7 @@ $(error Please install $(MDPROC) e.g. sudo apt install pandoc)
 endif
 
 else
-MDPROC = docker run --env "UNAME=$(shell id -u):$(shell id -g)" --volume $(shell pwd):/data marcelhuberfoo/pandoc-gitit pandoc
+MDPROC = docker run --env "UNAME=$(shell id -u):$(shell id -g)" --volume $(shell pwd):/data:z marcelhuberfoo/pandoc-gitit pandoc
 MDPARAMS_PDF = -f markdown -t latex $(BUILD_DIR)/$(notdir $<) -o $@ --template=$(PANDOCTEMPLATE_TEX) --latex-engine=xelatex "--variable=title:$(basename $(notdir $@))" $(MDPARAMS_PDF_ADDITIONAL)
 MDPARAMS_HTML = -f markdown -t html5 $(BUILD_DIR)/$(notdir $<) -o $@
 MDPARAMS_TEX = -f markdown -t latex $(BUILD_DIR)/$(notdir $<) -o $@
