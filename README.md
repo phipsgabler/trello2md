@@ -22,11 +22,12 @@ containing ordinary lists. Archived lists and cards are filtered out by default.
 
 There currently following arguments are supported:
 
+- `--output`/`-o` sets output filename (default is appending `.md` to the input filename)
 - `--labels`/`-l` adds a card's labels to its heading.
 - `--archived`/`-a` also includes archived lists and cards.
 - `--header`/`-i` prepends a header page with general information about the board.
 - `--comments`/`-m` includes the comments on a card.
-- `--output`/`-o` set output filename (default is appending `.md` to the input filename)
+- `--encoding`/`-e` specifies the file encoding to be used (defaults to `utf8`)
 
 More options are planned.
 
