@@ -56,7 +56,7 @@ def prepare_all_comments(data):
             content = prepare_content(action['data']['text'])
             
             comment_string = '- **{name}** ({date}):\n {content} \n'.format(
-                name=name, date=date, content=content)
+                name = name, date = date, content = content)
             
             ret[card_id].append(comment_string)
     return ret
@@ -82,9 +82,9 @@ def print_card(card_id, data, comments, print_labels):
 
         for n, label in enumerate(card['labels']):
             separator = ', ' * bool(n) # only for n > 0
-            label_string = '{sep}_{lbl}_'.format(\
-              lbl=(label['name'] or label['color']), \
-              sep=separator)
+            label_string = '{sep}_{lbl}_'.format(
+              lbl = (label['name'] or label['color']),
+              sep = separator)
             labels.append(label_string)
 
         labels.append(') ')
@@ -97,12 +97,12 @@ def print_card(card_id, data, comments, print_labels):
     attachments_string = '\n\n'.join(attachments) + '\n'
 
     # put it together
-    return '## {name} {lbls} ##\n{cntnt}\n{attms}\n{comments}\n'.format( \
-                                          name=unlines(card['name']), \
-                                          cntnt=content, \
-                                          attms=attachments_string, \
-                                          comments=comment_output, \
-                                          lbls=labels_string)
+    return '## {name} {lbls} ##\n{cntnt}\n{attms}\n{comments}\n'.format(
+                                          name = unlines(card['name']),
+                                          cntnt = content,
+                                          attms = attachments_string,
+                                          comments = comment_output,
+                                          lbls = labels_string)
 
 ################################################################################
 def print_checklists(card_id, data):
@@ -114,8 +114,8 @@ def print_checklists(card_id, data):
     for cl_id in card['idChecklists']:
         checklist = next(cl for cl in data['checklists'] if cl['id'] == cl_id)
         items_string = '\n'.join('- ' + item['name'] for item in checklist['checkItems'])
-        result.append('### Checklist: {name} ###\n{items}'.format(name=checklist['name'], \
-                                                     items=items_string))
+        result.append('### Checklist: {name} ###\n{items}'.format(name = checklist['name'],
+                                                     items = items_string))
 
     result.append('\n\n')
     return '\n\n'.join(result)
@@ -123,16 +123,21 @@ def print_checklists(card_id, data):
 ################################################################################
 def main():
     
-    parser = argparse.ArgumentParser(description='Convert a JSON export from Trello to Markdown.')
-    parser.add_argument('inputfile', help='The input JSON file')
-    parser.add_argument('-i', '--header', help='Include header page', action='store_true')
-    parser.add_argument('-m', '--comments', help='Include card comments', action='store_true')
-    parser.add_argument('-l', '--labels', help='Print card labels', action='store_true')
-    parser.add_argument('-a', '--archived', help='Don\'t ignore archived lists', action='store_true')
-    parser.add_argument('-c', '--card-links', help='(Currently not implemented)', action='store_true')
-    parser.add_argument('-o', '--output', help='The output file to create')
-    parser.add_argument('-e', '--encoding', help='File encoding to te used',
-                        default='utf8')
+    parser = argparse.ArgumentParser(description = 'Convert a JSON export from Trello to Markdown.')
+    parser.add_argument('inputfile', help = 'The input JSON file')
+    parser.add_argument('-o', '--output', help = 'The output file to create')
+    parser.add_argument('-i', '--header', help = 'Include header page',
+                        action = 'store_true')
+    parser.add_argument('-m', '--comments', help = 'Include card comments',
+                        action = 'store_true')
+    parser.add_argument('-l', '--labels', help = 'Print card labels',
+                        action = 'store_true')
+    parser.add_argument('-a', '--archived', help = 'Don\'t ignore archived lists',
+                        action = 'store_true')
+    parser.add_argument('-c', '--card-links', help = '(Currently not implemented)',
+                        action = 'store_true')
+    parser.add_argument('-e', '--encoding', help = 'File encoding to te used',
+                        default = 'utf8')
 
     args = parser.parse_args()
 
@@ -165,9 +170,9 @@ def main():
             # process all cards in current list
             for card in data['cards']:
                 if (not card['closed'] or args.archived) and (card['idList'] == lst['id']):
-                    markdown.append(print_card(card['id'], \
-                                               data, \
-                                               comments, \
+                    markdown.append(print_card(card['id'],
+                                               data,
+                                               comments,
                                                args.labels))
                     markdown.append(print_checklists(card['id'], data))
 
