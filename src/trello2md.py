@@ -9,7 +9,6 @@ import sys
 import argparse
 import json
 import re
-import codecs
 
 
 # a url in a line (obligatory starting with the protocol part)
@@ -132,12 +131,14 @@ def main():
     parser.add_argument('-a', '--archived', help='Don\'t ignore archived lists', action='store_true')
     parser.add_argument('-c', '--card-links', help='(Currently not implemented)', action='store_true')
     parser.add_argument('-o', '--output', help='The output file to create')
+    parser.add_argument('-e', '--encoding', help='File encoding to te used',
+                        default='utf8')
 
     args = parser.parse_args()
 
     # load infile to 'data'
     try:
-        with open(args.inputfile, 'r', encoding="utf8") as inf:
+        with open(args.inputfile, 'r', encoding = args.encoding) as inf:
             data = json.load(inf)
     except IOError as e:
         sys.exit('I/O error({0}): {1}'.format(e.errno, e.strerror))
@@ -179,7 +180,7 @@ def main():
             outputfile += '.md'
 
     try:
-        with open(outputfile, 'w', encoding="utf8") as of:
+        with open(outputfile, 'w', encoding = args.encoding) as of:
             of.write(''.join(markdown))
 
         print('Sucessfully translated to "{0}"!'.format(outputfile))
