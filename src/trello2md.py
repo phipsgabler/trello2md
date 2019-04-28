@@ -33,7 +33,7 @@ def prepare_content(content):
            
         # correct heading levels (add two)
         if line.startswith('#') and line.endswith('#'):
-            result.append('##{0}##'.format(unlines(line)))
+            result.append('## {0} ##'.format(unlines(line)))
         else:
             result.append(line)
     
@@ -165,7 +165,7 @@ def main():
     for lst in data['lists']:
         if not lst['closed'] or args.archived:
             # format list header
-            markdown.append('#{0}#\n\n'.format(unlines(lst['name'])))
+            markdown.append('# {0} #\n\n'.format(unlines(lst['name'])))
 
             # process all cards in current list
             for card in data['cards']:
